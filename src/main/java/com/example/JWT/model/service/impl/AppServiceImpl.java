@@ -80,13 +80,39 @@ public class AppServiceImpl implements AppService, UserDetailsService {
     }
 
     @Override
-    public AppUser getWinner() {
-        return statisticRepository.findAll().get(0).getWinner();
+    public AppUser getLooser() {
+        List<AppUser> tots = appUserRepository.findAll();
+        Double aCercar = tots.stream().mapToDouble( x -> x.getJugadesGuanyades() / x.getNombreDePartidesFetes()).max().getAsDouble();
+        Iterator<AppUser> iterator = tots.iterator();
+        int i = 0;
+        boolean trobat = false;
+        AppUser winner = null;
+        while(iterator.hasNext() && trobat == false){
+            AppUser next = iterator.next();
+            if(next.getJugadesGuanyades() / next.getNombreDePartidesFetes() == aCercar){
+                trobat = true;
+                winner = next;
+            }
+        }
+        return winner;
     }
 
     @Override
-    public AppUser getLooser() {
-        return statisticRepository.findAll().get(0).getLooser();
+    public AppUser getWinner() {
+        List<AppUser> tots = appUserRepository.findAll();
+        Double aCercar = tots.stream().mapToDouble( x -> x.getJugadesGuanyades() / x.getNombreDePartidesFetes()).max().getAsDouble();
+        Iterator<AppUser> iterator = tots.iterator();
+        int i = 0;
+        boolean trobat = false;
+        AppUser winner = null;
+        while(iterator.hasNext() && trobat == false){
+            AppUser next = iterator.next();
+            if(next.getJugadesGuanyades() / next.getNombreDePartidesFetes() == aCercar){
+                trobat = true;
+                winner = next;
+            }
+        }
+        return winner;
     }
 
     @Override
@@ -138,11 +164,10 @@ public class AppServiceImpl implements AppService, UserDetailsService {
 
     @Override
     public Double getResultatsTotals() {
-        System.out.println(statisticRepository.findAll());
-        AppUser[] resultats = statisticRepository.findAll().get(0).getResultats();
-        List<Float> llistaPercentatgeExit = Arrays.stream(resultats).map(x -> x.getPercentatgeExit()).collect(Collectors.toList());
+        Double guanyades = appUserRepository.findAll().stream().mapToDouble(x -> x.getJugadesGuanyades()).sum();
+        Double fetes = appUserRepository.findAll().stream().mapToDouble(s -> s.getNombreDePartidesFetes()).sum();
 
-        return llistaPercentatgeExit.stream().mapToDouble(x -> x).average().getAsDouble();
+        return guanyades/fetes;
     }
 
     @Override
