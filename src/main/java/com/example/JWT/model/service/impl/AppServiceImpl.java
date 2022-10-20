@@ -1,11 +1,7 @@
 package com.example.JWT.model.service.impl;
 
 import com.example.JWT.model.domain.AppUser;
-//import com.example.JWT.model.domain.Role;
-import com.example.JWT.model.domain.Statistic;
 import com.example.JWT.model.repository.AppUserRepository;
-//import com.example.JWT.model.repository.RoleUserRepository;
-import com.example.JWT.model.repository.StatisticRepository;
 import com.example.JWT.model.service.AppService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,8 +22,8 @@ import java.util.stream.Collectors;
 public class AppServiceImpl implements AppService, UserDetailsService {
 
     private final AppUserRepository appUserRepository;
-    private final StatisticRepository statisticRepository;
     private final PasswordEncoder passwordEncoder;
+
 
 
     @Override
@@ -74,11 +70,6 @@ public class AppServiceImpl implements AppService, UserDetailsService {
         return appUserRepository.save(modifiedAppUSer);
     }
 
-    public void afegirUnAJugadesGuanyades(AppUser appUser){
-        appUser.afegirPartidaGuanyada();
-        appUserRepository.save(appUser);
-    }
-
     @Override
     public AppUser getLooser() {
         List<AppUser> tots = appUserRepository.findAll();
@@ -116,30 +107,6 @@ public class AppServiceImpl implements AppService, UserDetailsService {
     }
 
     @Override
-    public Statistic setWinner(AppUser appUser) {
-        AppUser winner = statisticRepository.findAll().get(0).getWinner();
-        Statistic toReturn = null;
-        if (appUser.getPercentatgeExit() > winner.getPercentatgeExit()){
-            Statistic statistic = statisticRepository.findAll().get(0);
-            statistic.setWinner(appUser);
-            toReturn = statisticRepository.save(statistic);
-        }
-        return toReturn;
-    }
-
-    @Override
-    public Statistic setLooser(AppUser appUser) {
-        Statistic toReturn = statisticRepository.findAll().get(0);
-        AppUser looser = toReturn.getLooser();
-        if (appUser.getPercentatgeExit() < looser.getPercentatgeExit()){
-            toReturn.setLooser(appUser);
-        }
-        return statisticRepository.save(toReturn);
-
-
-    }
-
-    @Override
     public Map<String, Float> getRankingUsers() {
         List<AppUser> listAppUsers = appUserRepository.findAll();
         Map<String, Float> toReturn = null;
@@ -156,34 +123,11 @@ public class AppServiceImpl implements AppService, UserDetailsService {
     }
 
     @Override
-    public Integer addGameToUser(AppUser appUser){
-        AppUser user = appUserRepository.findByUserName(appUser.getUserName());
-        user.afegirPartidaFeta();
-        return user.getNombreDePartidesFetes();
-    }
-
-    @Override
     public Double getResultatsTotals() {
         Double guanyades = appUserRepository.findAll().stream().mapToDouble(x -> x.getJugadesGuanyades()).sum();
         Double fetes = appUserRepository.findAll().stream().mapToDouble(s -> s.getNombreDePartidesFetes()).sum();
 
         return guanyades/fetes;
-    }
-
-    @Override
-    public ArrayList<Integer[]> getHistoricJugadesAppUser(AppUser appUser) {
-        return appUserRepository.findByUserName(appUser.getUserName()).getHistoricJugadesFetes();
-    }
-
-    @Override
-    public AppUser addOneToHistoricJugadesAppUser(String userName, Integer[] aAfegir) {
-        AppUser au = appUserRepository.findByUserName(userName);
-        ArrayList<Integer[]> jugadesFetes = au.getHistoricJugadesFetes();
-        jugadesFetes.add(aAfegir);
-        au.setHistoricJugadesFetes(jugadesFetes);
-
-        return appUserRepository.save(au);
-
     }
 
     @Override

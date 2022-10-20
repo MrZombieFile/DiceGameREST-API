@@ -15,11 +15,7 @@ import java.util.*;
 @RestController
 @RequiredArgsConstructor
 public class AppController {
-/*
-* ###########################################################################
-*                    Falten les responseEntities d'error i relacionades
-* ###########################################################################
-* */
+
     private final AppServiceImpl appService;
 
     @GetMapping("/players")
@@ -73,14 +69,6 @@ public class AppController {
             moveResult[1] = new Random().nextInt(6) + 1;
 
             appUser.addOneToHistoricDeJugadesFetes(moveResult);
-            //appUser.setHistoricJugadesFetes(jugadesFetes);
-            //_____________________________________________________________________________________
-            //appUser.setHistoricJugadesFetes(appUser.addOneToHistoricDeJugadesFetes(moveResult));
-            //no se guarda l'historic de jugades fetes - creo que deberia ir en el service en vez de en el entity
-            ////appService.addOneToHistoricJugadesAppUser(appUser.getUserName(), moveResult);
-            //tampoco va
-            //
-            // no van los rankings winner looser
 
             if (moveResult[0] + moveResult[1] == 7){
                 appUser.afegirPartidaGuanyada();
@@ -90,10 +78,7 @@ public class AppController {
             }
 
             appService.modifyUser(appUser);
-            /*
-            appService.setWinner(appUser);
-            appService.setLooser(appUser);
-*/
+
         }else {
             moveResult = new Integer[2];
             moveResult[0] = 0;
