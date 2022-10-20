@@ -36,7 +36,7 @@ public class AppController {
     }
 
     @PutMapping("/players")
-    public ResponseEntity<AppUser> modifyAppUser(AppUser appUser){
+    public ResponseEntity<AppUser> modifyAppUser(@RequestBody AppUser appUser){
         return ResponseEntity.accepted().body(appService.modifyUser(appUser));
     }
 
