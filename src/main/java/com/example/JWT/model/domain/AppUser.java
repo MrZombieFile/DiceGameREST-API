@@ -46,7 +46,7 @@ public class AppUser {
     }
 
     public Float getPercentatgeExit(){
-        return this.nombreDePartidesFetes != 0 ? (float) (this.jugadesGuanyades / this.nombreDePartidesFetes * 100) : 0;
+        return this.nombreDePartidesFetes != 0 ? (float) (getJugadesGuanyades() / getNombreDePartidesFetes() )* 100 : 0;
     }
 
     public String getPassword() {

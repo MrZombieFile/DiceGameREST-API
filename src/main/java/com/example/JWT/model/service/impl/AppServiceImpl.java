@@ -71,6 +71,14 @@ public class AppServiceImpl implements AppService, UserDetailsService {
     }
 
     @Override
+    public Double getResultatsTotals() {
+        Double guanyades = appUserRepository.findAll().stream().mapToDouble(AppUser::getJugadesGuanyades).sum();
+        Double fetes = appUserRepository.findAll().stream().mapToDouble(AppUser::getNombreDePartidesFetes).sum();
+
+        return guanyades/fetes;
+    }
+
+    @Override
     public AppUser getLooser() {
         List<AppUser> tots = appUserRepository.findAll();
         Double aCercar = tots.stream().mapToDouble( x -> x.getJugadesGuanyades() / x.getNombreDePartidesFetes()).max().getAsDouble();
@@ -120,14 +128,6 @@ public class AppServiceImpl implements AppService, UserDetailsService {
         }
         inCaseThereArent.put("no-user", 0.0f);
         return toReturn != null ? toReturn : inCaseThereArent;
-    }
-
-    @Override
-    public Double getResultatsTotals() {
-        Double guanyades = appUserRepository.findAll().stream().mapToDouble(x -> x.getJugadesGuanyades()).sum();
-        Double fetes = appUserRepository.findAll().stream().mapToDouble(s -> s.getNombreDePartidesFetes()).sum();
-
-        return guanyades/fetes;
     }
 
     @Override

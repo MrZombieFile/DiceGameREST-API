@@ -9,6 +9,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.servlet.http.HttpSession;
 import java.net.URI;
 import java.util.*;
 
@@ -68,7 +69,8 @@ public class AppController {
     @GetMapping("/players/ranking/winner")
     public ResponseEntity<?> getWinner(){
         try{
-            return ResponseEntity.ok().body(appService.getWinner());
+            AppUser winner = appService.getWinner();
+            return ResponseEntity.ok().body(winner);
         }catch (Exception exc){
             return ResponseEntity.internalServerError().body("There was an error in the server");
         }
@@ -97,12 +99,12 @@ public class AppController {
     @PostMapping("/players/{id}/games")
     public ResponseEntity<?> appUserMove(@PathVariable("id") String id){
         Integer[] moveResult = null;
+        AppUser appUser = null;
         try{
-            AppUser appUser = appService.getUserById(id);
+            appUser = appService.getUserById(id);
             if (appUser == null){
                 return ResponseEntity.badRequest().body("There is no user with this id");
             }
-
 
             if (SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString().equalsIgnoreCase(appUser.getUserName())) {
                 moveResult = new Integer[2];
@@ -113,20 +115,20 @@ public class AppController {
 
                 if (moveResult[0] + moveResult[1] == 7) {
                     appUser.afegirPartidaGuanyada();
-                    appUser.afegirPartidaFeta();
-                } else if (moveResult[0] + moveResult[1] != 7) {
-                    appUser.afegirPartidaFeta();
                 }
 
+                appUser.afegirPartidaFeta();
                 appService.modifyUser(appUser);
 
-        }else {
-            return ResponseEntity.badRequest().body("You are not allowed to make this operation");
-        }
-        return ResponseEntity.ok().body(moveResult);
+                return ResponseEntity.ok().body(moveResult);
+            }else {
+                return ResponseEntity.badRequest().body("You are not allowed to make this operation");
+            }
         }catch(Exception exc){
             return ResponseEntity.internalServerError().body("There has been an internal server error");
         }
+
+
     }
 
 
